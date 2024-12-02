@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <string>
-#include <algorithm>
-#include <cmath>
 #include "../utils/file_reader.h"
 
 int main() {
@@ -20,16 +19,21 @@ int main() {
         right.push_back(right_num);
     }
 
-    std::sort(left.begin(), left.end());
-    std::sort(right.begin(), right.end());
-
-    // Calculate total distance
-    int total_distance = 0;
-    for (size_t i = 0; i < left.size(); ++i) {
-        total_distance += std::abs(left[i] - right[i]);
+    // Build a frequency map for the right list
+    std::unordered_map<int, int> right_freq;
+    for (const auto& num : right) {
+        right_freq[num]++;
     }
 
-    std::cout << "Total Distance: " << total_distance << std::endl;
+    // Calculate the similarity score
+    int similarity_score = 0;
+    for (const auto& num : left) {
+        if (right_freq.count(num)) {
+            similarity_score += num * right_freq[num];
+        }
+    }
+
+    std::cout << "Similarity Score: " << similarity_score << std::endl;
 
     return 0;
 }
