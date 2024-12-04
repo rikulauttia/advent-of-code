@@ -4,7 +4,7 @@
 #include <sstream>
 #include "../utils/file_reader.h"
 
-// Function to check if a report is safe
+// Function to check if a report is safe (Part 1 logic)
 bool isSafe(const std::vector<int>& report) {
     if (report.size() < 2) {
         return false; // A report with less than 2 numbers cannot be evaluated
@@ -36,6 +36,30 @@ bool isSafe(const std::vector<int>& report) {
     return isIncreasing || isDecreasing;
 }
 
+// Function to check if a report can be made safe by removing one level
+bool isSafeWithDampener(const std::vector<int>& report) {
+    if (isSafe(report)) {
+        return true; // Already safe, no need to remove a level
+    }
+
+    for (size_t i = 0; i < report.size(); ++i) {
+        // Create a modified report with the i-th level removed
+        std::vector<int> modifiedReport;
+        for (size_t j = 0; j < report.size(); ++j) {
+            if (j != i) { // Skip the level at index i
+                modifiedReport.push_back(report[j]);
+            }
+        }
+
+        // Check if the modified report is safe
+        if (isSafe(modifiedReport)) {
+            return true;
+        }
+    }
+
+    return false; // No single removal makes the report safe
+}
+
 int main() {
     // Read input from the input file
     std::vector<std::string> input = readFile("day02/input.txt");
@@ -52,16 +76,16 @@ int main() {
         reports.push_back(report);
     }
 
-    // Check each report for safety
+    // Count safe reports with Problem Dampener
     int safeCount = 0;
     for (const auto& report : reports) {
-        if (isSafe(report)) {
+        if (isSafeWithDampener(report)) {
             ++safeCount;
         }
     }
 
     // Output the number of safe reports
-    std::cout << "Number of safe reports: " << safeCount << std::endl;
+    std::cout << "Number of safe reports with Dampener: " << safeCount << std::endl;
 
     return 0;
 }
